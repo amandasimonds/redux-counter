@@ -4,29 +4,29 @@ import { connect } from "react-redux"
 
 import CounterControl from '../../components/CounterControl/CounterControl';
 import CounterOutput from '../../components/CounterOutput/CounterOutput';
-
+import * as actionTypes from "../../store/actions"
 class Counter extends Component {
     //receives from redux
     state = {
         counter: 0
     }
 
-    counterChangedHandler = ( action, value ) => {
-        switch ( action ) {
-            case 'inc':
-                this.setState( ( prevState ) => { return { counter: prevState.counter + 1 } } )
-                break;
-            case 'dec':
-                this.setState( ( prevState ) => { return { counter: prevState.counter - 1 } } )
-                break;
-            case 'add':
-                this.setState( ( prevState ) => { return { counter: prevState.counter + value } } )
-                break;
-            case 'sub':
-                this.setState( ( prevState ) => { return { counter: prevState.counter - value } } )
-                break;
-        }
-    }
+    // counterChangedHandler = ( action, value ) => {
+    //     switch ( action ) {
+    //         case 'inc':
+    //             this.setState( ( prevState ) => { return { counter: prevState.counter + 1 } } )
+    //             break;
+    //         case 'dec':
+    //             this.setState( ( prevState ) => { return { counter: prevState.counter - 1 } } )
+    //             break;
+    //         case 'add':
+    //             this.setState( ( prevState ) => { return { counter: prevState.counter + value } } )
+    //             break;
+    //         case 'sub':
+    //             this.setState( ( prevState ) => { return { counter: prevState.counter - value } } )
+    //             break;
+    //     }
+    // }
 
     render () {
         return (
@@ -36,8 +36,19 @@ class Counter extends Component {
                 {/* the clicked prop references to the action (which is essentially a prop) and is passed as a prop */}
                 <CounterControl label="Increment" clicked={this.props.onIncrementCounter} />
                 <CounterControl label="Decrement" clicked={this.props.onDecrementCounter}  />
-                <CounterControl label="Add 5" clicked={this.props.onAddCounter}  />
-                <CounterControl label="Subtract 5" clicked={this.props.onSubtractCounter}  />
+                <CounterControl label="Add 10" clicked={this.props.onAddCounter}  />
+                <CounterControl label="Subtract 15" clicked={this.props.onSubtractCounter}  />
+                <hr/>
+                {/* the function passes the result of the counter as an argument */}
+                <button onClick={() => this.props.onStoreResult(this.props.ctr)}>Store Result</button>
+                <ul>
+                    {this.props.storedResults.map(strResult => (
+                        <li 
+                            key={strResult.id}
+                            onClick={() => this.props.onDeleteResult(strResult.id)}
+                        >{strResult.value}</li>
+                    ))} 
+                </ul>
             </div>
         );
     }
@@ -48,7 +59,9 @@ const mapStateToProps = state => {
 
     //defining prop names
     return {
-        ctr: state.counter
+        //because we combined our reducers using the combineReducers function, we must take the new object into consideration
+        ctr: state.ctr.counter,
+        storedResults: state.res.results
     }
 }
 
@@ -56,12 +69,15 @@ const mapStateToProps = state => {
 //we're calling the dispatch action as the argument
 const mapDispatchToProps = dispatch => {
     return {
-        onIncrementCounter: () => dispatch({type: "INCREMENT"}),
-        onDecrementCounter: () => dispatch({type: "DECREMENT"}),
+        onIncrementCounter: () => dispatch({type: actionTypes.INCREMENT}),
+        onDecrementCounter: () => dispatch({type: actionTypes.DECREMENT}),
         //can send other properties with the action object
         //you do have to have a type property - this is not optional
-        onAddCounter: () => dispatch({type: "ADD", val: 10, name: "addCounter"}),
-        onSubtractCounter: () => dispatch({type: "SUBTRACT", val: 15})
+        onAddCounter: () => dispatch({type: actionTypes.ADD, val: 10, name: "addCounter"}),
+        onSubtractCounter: () => dispatch({type: actionTypes.SUBTRACT, val: 15}),
+        //passing result property to reducer
+        onStoreResult: (result) => dispatch({type: actionTypes.STORE_RESULT, result: result}),
+        onDeleteResult: (id) => dispatch({type: actionTypes.DELETE_RESULT, resultElId: id})
     };
 }
 
