@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
-
 import { connect } from "react-redux"
+
+import * as actionCreators from "../../store/actions/actions"
 
 import CounterControl from '../../components/CounterControl/CounterControl';
 import CounterOutput from '../../components/CounterOutput/CounterOutput';
-import * as actionTypes from "../../store/actions"
+import * as actionTypes from "../../store/actions/actions"
 class Counter extends Component {
     //receives from redux
     state = {
@@ -58,6 +59,9 @@ class Counter extends Component {
 const mapStateToProps = state => {
 
     //defining prop names
+    //remember, this is how the reducer will read the data coming from this component. 
+    //in the reducer, it will read it as state.ctr.counter
+    //to pass this through the component, use this.props.ctr so the reducer can read it as state.ctr.counter
     return {
         //because we combined our reducers using the combineReducers function, we must take the new object into consideration
         ctr: state.ctr.counter,
@@ -69,15 +73,17 @@ const mapStateToProps = state => {
 //we're calling the dispatch action as the argument
 const mapDispatchToProps = dispatch => {
     return {
-        onIncrementCounter: () => dispatch({type: actionTypes.INCREMENT}),
-        onDecrementCounter: () => dispatch({type: actionTypes.DECREMENT}),
+        //we imported the action creater (which is a function!)
+        onIncrementCounter: () => dispatch(actionCreators.increment()),
+        onDecrementCounter: () => dispatch(actionCreators.decrement()),
         //can send other properties with the action object
         //you do have to have a type property - this is not optional
-        onAddCounter: () => dispatch({type: actionTypes.ADD, val: 10, name: "addCounter"}),
-        onSubtractCounter: () => dispatch({type: actionTypes.SUBTRACT, val: 15}),
+        onAddCounter: () => dispatch(actionCreators.add(10)),
+        onSubtractCounter: () => dispatch(actionCreators.subtract(15)),
         //passing result property to reducer
-        onStoreResult: (result) => dispatch({type: actionTypes.STORE_RESULT, result: result}),
-        onDeleteResult: (id) => dispatch({type: actionTypes.DELETE_RESULT, resultElId: id})
+        //this is where you will pass any arguments that the reducer will need to read
+        onStoreResult: (result) => dispatch(actionCreators.storeResult(result)),
+        onDeleteResult: (id) => dispatch(actionCreators.deleteResult(id))
     };
 }
 
