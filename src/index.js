@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 //combine reducers merges our reducers into one state and one reducer
 import { createStore, combineReducers, applyMiddleware, compose } from 'redux'
 import { Provider } from "react-redux"
+import thunk from "redux-thunk";
 
 import './index.css';
 import App from './App';
@@ -40,7 +41,7 @@ const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 //creating a store successfully with our own reducer
 //next argument is the enhancer
 //you can pass more enhancers, or middleware
-const store = createStore(rootReducer, composeEnhancers(applyMiddleware(logger)));
+const store = createStore(rootReducer, composeEnhancers(applyMiddleware(logger, thunk)));
 
 ReactDOM.render(
 //Wrap the app with the store that we created.
